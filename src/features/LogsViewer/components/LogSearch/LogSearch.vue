@@ -1,8 +1,8 @@
 <template>
   <div class="log-search">
     <q-input :model-value="searchText" label="Search" @update:model-value="onSearch($event)" />
-    <q-btn @click="prevMatch" :disabled="!hasMatches">Prev</q-btn>
-    <q-btn @click="nextMatch" :disabled="!hasMatches">Next</q-btn>
+    <q-btn @click="prevMatch" class="q-mr-md q-mt-md" :disabled="!hasMatches">Prev</q-btn>
+    <q-btn @click="nextMatch" class="q-mt-md" :disabled="!hasMatches">Next</q-btn>
   </div>
 </template>
 

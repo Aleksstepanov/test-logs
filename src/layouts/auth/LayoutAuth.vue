@@ -3,8 +3,8 @@
     <slot></slot>
   </div>
 </template>
-<script>
-export default {
+<script setup lang="ts">
+defineOptions({
   name: 'LayoutAuth'
-}
+})
 </script>

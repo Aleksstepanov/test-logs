@@ -1,6 +1,6 @@
 <template>
   <div class="log-filter">
-    <q-btn v-for="level in levels" :key="level" @click="selectLevel(level)">
+    <q-btn v-for="level in levels" :key="level" class="q-mr-md" @click="selectLevel(level)">
       {{ level }}
     </q-btn>
     <q-btn

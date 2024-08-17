@@ -8,7 +8,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-// import { getLogin, getPassword, setToken, setUsername } from 'src/services/auth/auth'
 import { Logs, LogItem } from './types'
 import { WampService } from 'src/services/WAMP/WampService'
 import { LogsViewer } from 'src/features/LogsViewer'
@@ -37,10 +36,15 @@ onMounted(async () => {
       authStore.clearAuth()
       await router.push({ name: 'page-login' })
     } else {
-      const result = await wampService.loginByToken(token)
-      const { Username, Token } = result
-      authStore.setToken(Token)
-      authStore.setUsername(Username)
+      try {
+        const result = await wampService.loginByToken(token)
+        const { Username, Token } = result
+        authStore.setToken(Token)
+        authStore.setUsername(Username)
+      } catch (error) {
+        authStore.clearAuth()
+        await router.push({ name: 'page-login' })
+      }
     }
     await wampService.subscribeToLogs((logData: Logs) => {
       const { Items } = logData
