@@ -1,28 +1,44 @@
 <template>
   <div class="log-search">
-    <q-input v-model="searchText" label="Search" @input="onSearch" />
-    <q-btn @click="prevMatch">Prev</q-btn>
-    <q-btn @click="nextMatch">Next</q-btn>
+    <q-input :model-value="searchText" label="Search" @update:model-value="onSearch($event)" />
+    <q-btn @click="prevMatch" :disabled="!hasMatches">Prev</q-btn>
+    <q-btn @click="nextMatch" :disabled="!hasMatches">Next</q-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, computed } from 'vue'
 
-const searchText = ref('')
-const emit = defineEmits(['updateSearch'])
+defineProps({
+  searchText: {
+    type: String,
+    default: ''
+  }
+})
+const currentMatchIndex = ref<number | null>(null)
+const matches = ref<number[]>([])
+const emit = defineEmits(['updateSearch', 'updateMatches'])
 
-const onSearch = () => {
-  emit('updateSearch', searchText.value)
+const onSearch = (event: string | number | null) => {
+  emit('updateSearch', event)
+  currentMatchIndex.value = null
 }
 
 const prevMatch = () => {
-  // Логика для перехода к предыдущему совпадению
+  if (matches.value.length > 0) {
+    currentMatchIndex.value = (currentMatchIndex.value !== null ? (currentMatchIndex.value - 1 + matches.value.length) % matches.value.length : 0)
+    emit('updateMatches', currentMatchIndex.value)
+  }
 }
 
 const nextMatch = () => {
-  // Логика для перехода к следующему совпадению
+  if (matches.value.length > 0) {
+    currentMatchIndex.value = (currentMatchIndex.value !== null ? (currentMatchIndex.value + 1) % matches.value.length : 0)
+    emit('updateMatches', currentMatchIndex.value)
+  }
 }
+
+const hasMatches = computed(() => matches.value.length > 0)
 </script>
 
 <style scoped>
