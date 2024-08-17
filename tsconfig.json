@@ -1,7 +1,11 @@
 {
   "extends": "@quasar/app-webpack/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types"
+    ]
   },
   "exclude": [
     "./dist",

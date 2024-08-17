@@ -55,6 +55,13 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
+      // extendWebpack (cfg) {
+      //   cfg.resolve.fallback = {
+      //     stream: require.resolve('stream-browserify'),
+      //     assert: require.resolve('assert/'),
+      //     util: require.resolve('util/')
+      //   }
+      // },
       vueRouterMode: 'hash' // available values: 'hash', 'history'
 
       // transpile: false,
