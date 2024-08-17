@@ -13,7 +13,10 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
     "core-js": "^3.31.1",
+    "just-clone": "^6.2.0",
     "mitt": "^3.0.1",
     "quasar": "^2.16.0",
     "vue": "^3.4.18",
