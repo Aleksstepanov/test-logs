@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import { WampService } from '../services/WampService'
+import { WampService } from '../services/WAMP/WampService'
 
 defineOptions({
   name: 'IndexPage'
