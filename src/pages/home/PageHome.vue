@@ -1,29 +1,52 @@
 <template>
-  <q-page class="row items-center justify-evenly">
+  <div class="fullscreen text-center q-pa-md flex flex-center">
     <p>Test</p>
-  </q-page>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { getLogin, getPassword, setToken, setUsername } from 'src/services/auth/auth'
+import { Logs, LogItem } from './types'
 import { WampService } from 'src/services/WAMP/WampService'
 
 defineOptions({
   name: 'PageHome'
 })
 
+const router = useRouter()
 const wampService = new WampService('ws://test.enter-systems.ru/')
-// wampService.connect()
-// wampService.login('enter', 'A505a')
 
+// state
+const logs = ref<LogItem[]>([])
+
+// life hooks
 onMounted(async () => {
   try {
     await wampService.connect()
-    const authResult = await wampService.login('enter', 'A505a')
-    console.log('Logged in:', authResult)
+    const login = getLogin()
+    const password = getPassword()
+    if (!login || !password) {
+      await router.push('/login')
+    } else {
+      const authResult = await wampService.login(login, password)
+      const { Token, Username } = authResult
+      setToken(Token)
+      setUsername(Username)
+
+      await wampService.subscribeToLogs((logData: Logs) => {
+        const { Items } = logData
+        Items && Items?.length && logs.value.push(...Items)
+      })
+    }
   } catch (error) {
     console.log(error)
+  }
+})
+onUnmounted(() => {
+  if (wampService && wampService?.disconnect) {
+    wampService.disconnect()
   }
 })
 </script>

@@ -6,11 +6,20 @@ export class WampService {
   private pingCounter = 0
 
   constructor (private url: string) {
+    if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+      this.disconnect()
+    }
     this.websocket = new WebSocket(this.url)
   }
 
   connect (): Promise<void> {
     return new Promise((resolve, reject) => {
+      if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+        console.log('WebSocket is already connected.')
+        resolve()
+        return
+      }
+
       if (!this.websocket) {
         return reject(new Error('WebSocket instance not created'))
       }
@@ -23,6 +32,7 @@ export class WampService {
 
       this.websocket.onmessage = (event) => {
         const message = JSON.parse(event.data)
+        console.log('message', message)
         this.handleMessage(message)
       }
 
@@ -54,8 +64,9 @@ export class WampService {
       case 3: // CallResult
         console.log('Call result received:', message[2])
         break
-
-        // Добавьте другие кейсы для обработки других типов сообщений...
+      case 20: // Heartbeat
+        console.log('Received heartbeat:', message)
+        break
 
       default:
         console.warn('Unknown message type:', type)
