@@ -29,6 +29,7 @@ const isLoading = ref(false)
 // life hooks
 onMounted(async () => {
   isLoading.value = true
+  console.log(process.env.API_URL)
   try {
     await wampService.connect()
     const { token } = authStore
