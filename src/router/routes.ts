@@ -1,17 +1,23 @@
+import { metaAccount, metaPublic } from './meta-config'
 import { RouteRecordRaw } from 'vue-router'
+import { RouteMeta } from './types'
 
-const routes: RouteRecordRaw[] = [
+const routes :Array<RouteRecordRaw & {meta?: RouteMeta}> = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }]
+    redirect: { name: 'page-home' }
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    path: '/login',
+    name: 'page-login',
+    component: () => import('pages/login'),
+    meta: metaPublic
+  },
+  {
+    path: '/home',
+    name: 'page-home',
+    component: () => import('pages/home'),
+    meta: metaAccount
   }
 ]
 

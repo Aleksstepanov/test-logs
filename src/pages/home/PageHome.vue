@@ -7,10 +7,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import { WampService } from '../services/WAMP/WampService'
+import { WampService } from 'src/services/WAMP/WampService'
 
 defineOptions({
-  name: 'IndexPage'
+  name: 'PageHome'
 })
 
 const wampService = new WampService('ws://test.enter-systems.ru/')
