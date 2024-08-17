@@ -1,5 +1,6 @@
 <template>
-  <div class="fullscreen text-white text-center q-pa-md flex flex-center">
+  <PagePreloader v-if="isLoading" />
+  <div v-else class="fullscreen text-white text-center q-pa-md flex flex-center">
     <div class="flex row justify-center q-pl-xl q-pr-xl">
       <FormLogin
         :disabled="isLoading"
@@ -11,20 +12,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { LoginType } from './types'
 import { FormLogin } from './form'
 import { emitter } from 'src/plugins'
 import { WampService } from 'src/services/WAMP/WampService'
 import { useRouter } from 'vue-router'
-import { setLogin, setPassword } from 'src/services/auth/auth'
+import { useAuthStore } from 'src/stores/authStore'
+import { PagePreloader } from 'components/PagePreloader'
 
 defineOptions({
   name: 'PageLogin'
 })
 
 const wampService = new WampService('ws://test.enter-systems.ru/')
-
+const authStore = useAuthStore()
 const router = useRouter()
 
 // state
@@ -41,8 +43,11 @@ const onSubmit = async (payload: LoginType) => {
         message: 'Authentication error'
       })
     } else {
-      setLogin(login)
-      setPassword(password)
+      await wampService.connect()
+      const authResult = await wampService.login(login, password)
+      const { Token, Username } = authResult
+      authStore.setToken(Token)
+      authStore.setUsername(Username)
       await router.push({ name: 'page-home' })
     }
   } catch (e) {
@@ -56,5 +61,36 @@ const onSubmit = async (payload: LoginType) => {
     isLoading.value = false
   }
 }
+
+// lifehooks
+onMounted(async () => {
+  isLoading.value = true
+  try {
+    if (authStore.isAutoLogin) {
+      const { token } = authStore
+      if (token) {
+        await wampService.connect()
+        const result = await wampService.loginByToken(token)
+        const { Username, Token } = result
+        authStore.setToken(Token)
+        authStore.setUsername(Username)
+        await router.push({ name: 'page-home' })
+      }
+    }
+  } catch (e) {
+    console.log('Auto-login error: ', e)
+    emitter.emit('notify', {
+      type: 'negative',
+      message: 'Auto-login error. Please login with password'
+    })
+  } finally {
+    isLoading.value = false
+  }
+})
+onUnmounted(() => {
+  if (wampService && wampService?.disconnect) {
+    wampService.disconnect()
+  }
+})
 
 </script>

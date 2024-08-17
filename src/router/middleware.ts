@@ -1,7 +1,7 @@
 import { NavigationGuardNext, RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import { defaultRedirect } from 'src/router/index'
-import { isAuthenticated } from 'src/services/auth/auth'
 import { AuthMeta } from './types'
+import { useAuthStore } from 'src/stores/authStore'
 
 const defaultAuthRedirect: RouteLocationRaw = { name: 'page-login' }
 
@@ -15,12 +15,10 @@ export const beforeEach = (
 ) => {
   const authMeta = to.meta.auth as boolean | AuthMeta | undefined
 
-  // Проверяем, требуется ли аутентификация
   const authRequired = typeof authMeta === 'object' ? authMeta.required === true : authMeta === true
 
-  if (!authRequired) return next() // Публичный маршрут
+  if (!authRequired) return next()
 
-  // Определение перенаправления
   const redirect = (): RouteLocationRaw => {
     if (typeof authMeta === 'object') {
       if (typeof authMeta.redirect === 'function') {
@@ -31,14 +29,13 @@ export const beforeEach = (
     return defaultAuthRedirect
   }
 
-  if (!isAuthenticated()) {
+  const authStore = useAuthStore()
+
+  if (!authStore.isAuthenticated) {
     const route = redirect()
-    // Добавляем параметр для перенаправления после входа
     const redirectAfterLoginTo = to.fullPath
 
-    // Обработка случая, когда route является объектом
     if (typeof route === 'object' && 'query' in route) {
-      // Обновляем query в случае, если route является объектом
       const updatedRoute = { ...route } as RouteLocationRaw & { query?: Record<string, any> }
       updatedRoute.query = {
         ...(route.query || {}),
@@ -47,7 +44,6 @@ export const beforeEach = (
       return next(updatedRoute)
     }
 
-    // Обработка случая, когда route является строкой
     if (typeof route === 'string') {
       return next({
         path: route,
@@ -71,6 +67,7 @@ export const redirectIfAuthenticated = (
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
-  if (isAuthenticated()) return next({ name: defaultRedirect() })
+  const authStore = useAuthStore()
+  if (authStore.isAuthenticated) return next({ name: defaultRedirect() })
   next()
 }

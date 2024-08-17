@@ -1,6 +1,7 @@
 import { metaAccount, metaPublic } from './meta-config'
 import { RouteRecordRaw } from 'vue-router'
 import { RouteMeta } from './types'
+import { redirectIfAuthenticated } from './middleware'
 
 const routes :Array<RouteRecordRaw & {meta?: RouteMeta}> = [
   {
@@ -11,7 +12,8 @@ const routes :Array<RouteRecordRaw & {meta?: RouteMeta}> = [
     path: '/login',
     name: 'page-login',
     component: () => import('pages/login'),
-    meta: metaPublic
+    meta: metaPublic,
+    beforeEnter: redirectIfAuthenticated
   },
   {
     path: '/home',
