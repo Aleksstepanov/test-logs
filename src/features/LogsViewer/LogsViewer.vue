@@ -10,7 +10,7 @@
     >
       <template v-slot="{ item, index }">
         <div :class="getLogClass(item)" :key="index">
-          <span>{{ item.Timestamp }}</span> -
+          <span>{{ dayjs(item?.Timestamp || '', SERVER_FORMAT_DATE).format(CLIENT_FORMAT_DATE) }}</span> -
           <span>{{ item.Level }}</span>:
           <span v-html="highlightText(item.Message)"></span>
         </div>
@@ -24,7 +24,8 @@ import { ref, computed } from 'vue'
 import { LogItem } from './types'
 import { LogFilter } from './components/LogFilter'
 import { LogSearch } from './components/LogSearch'
-
+import { dayjs } from 'src/plugins'
+import { SERVER_FORMAT_DATE, CLIENT_FORMAT_DATE } from 'src/const/dayjs'
 const props = defineProps<{
   initialLogs: LogItem[];
   defaultSearchText: string;
@@ -35,15 +36,11 @@ const searchText = ref(props.defaultSearchText || '')
 const selectedLevel = ref<string | null>(null)
 
 const filteredLogs = computed(() => {
-  // Фильтруем логи по уровню и тексту поиска
   return logs.value.filter(log => {
-    // Если уровень фильтрации установлен и не совпадает с уровнем лога, пропускаем лог
     const matchesLevel = !selectedLevel.value || log.Level === selectedLevel.value
 
-    // Если текст поиска не пуст и сообщение не содержит текст поиска, пропускаем лог
     const matchesSearchText = !searchText.value || (log.Message && log.Message.toLowerCase().includes(searchText.value.toLowerCase()))
 
-    // Возвращаем true, если лог соответствует обоим условиям
     return matchesLevel && matchesSearchText
   })
 })
