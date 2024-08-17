@@ -27,6 +27,10 @@ import { LogSearch } from './components/LogSearch'
 import dayjs from 'dayjs'
 import { SERVER_FORMAT_DATE, CLIENT_FORMAT_DATE } from 'src/const/dayjs'
 
+defineOptions({
+  name: 'LogsViewer'
+})
+
 const props = defineProps<{
   initialLogs: LogItem[];
   defaultSearchText: string;
@@ -138,5 +142,4 @@ const formatTimestamp = (timestamp: string) => {
 .log-trace {
   color: blue;
 }
-/* Добавьте стили для других уровней логов */
 </style>

@@ -1,10 +1,14 @@
 <template>
   <div></div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { emitter } from 'src/plugins'
+
+defineOptions({
+  name: 'ShowNotify'
+})
 
 const $q = useQuasar()
 

@@ -20,6 +20,12 @@ const routes :Array<RouteRecordRaw & {meta?: RouteMeta}> = [
     name: 'page-home',
     component: () => import('pages/home'),
     meta: metaAccount
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'page-not-found',
+    component: () => import('pages/ErrorNotFound.vue'),
+    meta: metaPublic
   }
 ]
 
