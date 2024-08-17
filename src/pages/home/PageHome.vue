@@ -1,6 +1,6 @@
 <template>
   <div class="fullscreen text-center q-pa-md flex flex-center">
-    <p>Test</p>
+    <LogsViewer :initial-logs="logs" default-search-text="" />
   </div>
 </template>
 
@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router'
 import { getLogin, getPassword, setToken, setUsername } from 'src/services/auth/auth'
 import { Logs, LogItem } from './types'
 import { WampService } from 'src/services/WAMP/WampService'
+import { LogsViewer } from 'src/features/LogsViewer'
 
 defineOptions({
   name: 'PageHome'
