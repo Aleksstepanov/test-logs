@@ -24,8 +24,7 @@ import { PagePreloader } from 'components/PagePreloader'
 defineOptions({
   name: 'PageLogin'
 })
-
-const wampService = new WampService('ws://test.enter-systems.ru/')
+const wampService = new WampService(process.env.VUE_APP_WAMP || '')
 const authStore = useAuthStore()
 const router = useRouter()
 

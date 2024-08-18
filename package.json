@@ -30,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "assert": "^2.1.0",
+    "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.19.1",

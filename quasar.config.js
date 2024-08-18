@@ -11,7 +11,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { configure } = require('quasar/wrappers')
-const webpack = require('webpack')
+require('dotenv').config()
 
 module.exports = configure(function (ctx) {
   return {
@@ -55,17 +55,9 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
-      // extendWebpack (cfg) {
-      //   cfg.plugins.push(
-      //     new webpack.DefinePlugin({
-      //       'process.env': {
-      //         API_URL: JSON.stringify(process.env.VUE_APP_API_URL)
-      //       }
-      //     })
-      //   )
-      // }
       env: {
-        API_URL: 'ws://test.enter-systems.ru/'
+        VUE_APP_API_URL: process.env.VUE_APP_API_URL,
+        VUE_APP_WAMP: process.env.VUE_APP_WAMP
       }
 
       // transpile: false,
@@ -96,7 +88,7 @@ module.exports = configure(function (ctx) {
         type: 'http'
       },
       port: 8080,
-      open: true, // opens browser window automatically
+      open: false, // opens browser window automatically
       historyApiFallback: true
     },
 

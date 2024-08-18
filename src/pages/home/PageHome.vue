@@ -20,7 +20,7 @@ defineOptions({
 
 const router = useRouter()
 const authStore = useAuthStore()
-const wampService = new WampService('ws://test.enter-systems.ru/')
+const wampService = new WampService(process.env.VUE_APP_WAMP || '')
 
 // state
 const logs = ref<LogItem[]>([])
@@ -29,7 +29,6 @@ const isLoading = ref(false)
 // life hooks
 onMounted(async () => {
   isLoading.value = true
-  console.log(process.env.API_URL)
   try {
     await wampService.connect()
     const { token } = authStore

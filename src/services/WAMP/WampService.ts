@@ -75,21 +75,21 @@ export class WampService {
 
   async login (username: string, password: string): Promise<LoginResponse> {
     const callId = this.generateCallId()
-    const request = [2, callId, 'http://enter.local/login', username, password]
+    const request = [2, callId, `${process.env.VUE_APP_API_URL}login`, username, password]
     const response = await this.sendRequest(request)
     return response as { Token: string; Username: string; }
   }
 
   async loginByToken (token: string): Promise<{ Token: string; Username: string; }> {
     const callId = this.generateCallId()
-    const request = [2, callId, 'http://enter.local/loginByToken', token]
+    const request = [2, callId, `${process.env.VUE_APP_API_URL}loginByToken`, token]
     const response = await this.sendRequest(request)
     return response as { Token: string; Username: string; }
   }
 
   async subscribeToLogs (callback: (event: any) => void): Promise<void> {
     if (!this.sessionId) throw new Error('Session is not established')
-    const request = [5, 'http://enter.local/subscription/logs/list']
+    const request = [5, `${process.env.VUE_APP_API_URL}subscription/logs/list`]
     this.websocket?.send(JSON.stringify(request))
 
     this.websocket!.onmessage = (event) => {
@@ -97,9 +97,8 @@ export class WampService {
       const type = message[0] // Тип сообщения
 
       if (type === 8) {
-        // Проверяем, что это сообщение типа EventMessage
         const eventMessage = message as EventMessage
-        const data = eventMessage[2] // Теперь TypeScript знает, что `2` существует
+        const data = eventMessage[2]
         callback(data)
       }
     }
@@ -107,7 +106,7 @@ export class WampService {
 
   async logout (): Promise<void> {
     const callId = this.generateCallId()
-    const request = [2, callId, 'http://enter.local/logout']
+    const request = [2, callId, `${process.env.VUE_APP_API_URL}logout`]
     await this.sendRequest(request)
   }
 
