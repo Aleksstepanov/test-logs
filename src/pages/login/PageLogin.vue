@@ -1,6 +1,6 @@
 <template>
   <PagePreloader v-if="isLoading" />
-  <div v-else class="fullscreen text-white text-center q-pa-md flex flex-center">
+  <div v-else class="fullscreen bg-grey-2 text-center q-pa-md flex flex-center">
     <div class="flex row justify-center q-pl-xl q-pr-xl">
       <FormLogin
         :disabled="isLoading"

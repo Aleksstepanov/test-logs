@@ -7,38 +7,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, computed } from 'vue'
+import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   searchText: {
     type: String,
     default: ''
+  },
+  matches: {
+    type: Array as () => number[],
+    default: () => []
+  },
+  currentMatchIndex: {
+    type: Number as () => number | null | undefined,
+    default: undefined
   }
 })
-const currentMatchIndex = ref<number | null>(null)
-const matches = ref<number[]>([])
 const emit = defineEmits(['updateSearch', 'updateMatches'])
 
+// computed
+const hasMatches = computed(() => props.matches.length > 0)
+
+// methods
 const onSearch = (event: string | number | null) => {
   emit('updateSearch', event)
-  currentMatchIndex.value = null
 }
 
 const prevMatch = () => {
-  if (matches.value.length > 0) {
-    currentMatchIndex.value = (currentMatchIndex.value !== null ? (currentMatchIndex.value - 1 + matches.value.length) % matches.value.length : 0)
-    emit('updateMatches', currentMatchIndex.value)
+  if (props.matches.length > 0) {
+    const newIndex = props.currentMatchIndex !== undefined && props.currentMatchIndex !== null
+      ? (props.currentMatchIndex - 1 + props.matches.length) % props.matches.length
+      : props.matches.length - 1
+    emit('updateMatches', newIndex)
   }
 }
 
 const nextMatch = () => {
-  if (matches.value.length > 0) {
-    currentMatchIndex.value = (currentMatchIndex.value !== null ? (currentMatchIndex.value + 1) % matches.value.length : 0)
-    emit('updateMatches', currentMatchIndex.value)
+  if (props.matches.length > 0) {
+    const newIndex = props.currentMatchIndex !== undefined && props.currentMatchIndex !== null
+      ? (props.currentMatchIndex + 1) % props.matches.length
+      : 0
+    emit('updateMatches', newIndex)
   }
 }
-
-const hasMatches = computed(() => matches.value.length > 0)
 </script>
 
 <style scoped>

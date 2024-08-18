@@ -1,7 +1,11 @@
 <template>
   <div class="log-viewer">
     <LogFilter @filter="applyFilter" @reset-filters="resetFilters" />
-    <LogSearch :searchText="searchText" @updateSearch="updateSearch" @updateMatches="updateMatches" />
+    <LogSearch :searchText="searchText"
+               :matches="searchMatches"
+               :currentMatchIndex="currentMatchIndex"
+               @updateSearch="updateSearch"
+               @updateMatches="updateMatches" />
     <q-virtual-scroll
       :items="filteredLogs"
       item-size="24px"
@@ -20,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { LogItem } from './types'
 import { LogFilter } from './components/LogFilter'
 import { LogSearch } from './components/LogSearch'
@@ -53,6 +57,7 @@ const filteredLogs = computed(() => {
 
 const applyFilter = (level: string) => {
   selectedLevel.value = level
+  searchText.value = ''
 }
 
 const resetFilters = () => {
@@ -90,14 +95,16 @@ const findMatches = () => {
 
   if (searchMatches.value.length > 0) {
     currentMatchIndex.value = 0
+    scrollToMatch()
   }
 }
 
-const scrollToMatch = () => {
+const scrollToMatch = async () => {
   if (currentMatchIndex.value !== null && searchMatches.value.length > 0) {
     const matchIndex = searchMatches.value[currentMatchIndex.value]
-    const scrollContainer = document.querySelector('.q-virtual-scroll__container')
-    const item = document.querySelector(`[key="${matchIndex}"]`)
+    await nextTick()
+    const scrollContainer = document.querySelector('.q-virtual-scroll__content') as HTMLElement | null
+    const item = document.querySelector(`.log-item:nth-child(${matchIndex + 1})`) as HTMLElement | null
     if (scrollContainer && item) {
       scrollContainer.scrollTop = item.offsetTop - scrollContainer.offsetHeight / 2
     }
